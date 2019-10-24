@@ -64,7 +64,6 @@ export default {
   watch: {
     card: {
       handler() {
-        console.log('CARD:', this.card);
         this.cardCopy = JSON.parse(JSON.stringify(this.card));
       },
       immediate: true,

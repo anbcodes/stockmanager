@@ -55,7 +55,6 @@ export default {
     getOpenGraph() {
       const options = { url: this.newsCard.link };
       openGraph(options, (error, results) => {
-        console.log('OPEN:', results);
         this.ogData = results.data || {};
       });
     },
