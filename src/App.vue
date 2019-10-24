@@ -8,6 +8,11 @@
 
     <v-content>
       <v-container>
+        <v-row>
+          <span class="title">
+            Stocks:
+          </span>
+        </v-row>
         <v-row height="100">
           <v-col cols="3" v-for="stock in stocks" :key='stock.id'>
             <stock-card :stock="stock" />
@@ -19,6 +24,16 @@
               </v-icon>
             </v-btn>
           </v-col>
+        </v-row>
+        <v-row v-if="formatedShownStocks">
+          <span class="title">
+            Sites<span> for {{formatedShownStocks}}</span>:
+          </span>
+        </v-row>
+        <v-row v-else>
+          <span class="title">
+            Add Site:
+          </span>
         </v-row>
          <v-row>
           <v-col cols="4" v-for="card in cards" :key='card.id'>
@@ -73,6 +88,10 @@ export default {
     async getCards() {
       const cards = await this.$db.getNewsCards();
       this.cards = cards.sort((e1, e2) => new Date(e1) - new Date(e2));
+      const shownStocks = this.stocks
+        .filter(v => v.show)
+        .map(v => v.name);
+      this.cards = this.cards.filter(v => shownStocks.includes(v.stock));
     },
     async getStocks() {
       const stocks = await this.$db.getStocks();
@@ -84,6 +103,7 @@ export default {
         ticker: 'EXAMPLE',
         count: 0,
         price: 0,
+        show: false,
       };
       this.stockEditOpen = true;
     },
@@ -95,6 +115,22 @@ export default {
         stock: 'pick a stock',
       };
       this.newsEditOpen = true;
+    },
+  },
+  computed: {
+    formatedShownStocks() {
+      const stockNames = this.stocks
+        .filter(v => v.show)
+        .map(v => v.name);
+      return stockNames.length <= 1
+        ? stockNames.join(', ')
+        : stockNames
+          .slice(0, -1)
+          .join(', ')
+          .concat('and, ')
+          .concat(
+            stockNames.slice(-1)[0],
+          );
     },
   },
 };

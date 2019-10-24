@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :value="value" @input="$emit(arguments[0])">
+  <v-dialog :value="value" @input="$emit(arguments[0])" max-width="700">
     <v-card>
       <v-card-title>
         {{cardCopy.name}} ({{cardCopy.stock}})
@@ -16,25 +16,25 @@
             <v-text-field label="link" v-model="cardCopy.link"/>
           </v-row>
           <v-row>
-            <v-date-picker v-model="cardCopy.date"/>
+            <v-date-picker v-model="cardCopy.date" landscape full-width/>
           </v-row>
         </v-container>
       </v-card-text>
       <v-card-actions>
         <v-container>
           <v-row>
-            <v-col cols="2">
-              <v-btn @click="$emit('input', false)">
+            <v-col cols="4">
+              <v-btn block @click="$emit('input', false)" outlined>
                 Close
               </v-btn>
             </v-col>
-            <v-col cols="2">
-              <v-btn @click="save">
+            <v-col cols="4">
+              <v-btn block @click="save" outlined color="success">
                 {{create ? 'Create' : 'Save'}}
               </v-btn>
             </v-col>
-            <v-col cols="2" v-if="!create">
-              <v-btn @click="remove">
+            <v-col cols="4" v-if="!create">
+              <v-btn block @click="remove" outlined color="error">
                 Delete
               </v-btn>
             </v-col>
