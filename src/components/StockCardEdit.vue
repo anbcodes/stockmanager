@@ -57,7 +57,6 @@ export default {
   watch: {
     stock: {
       handler() {
-        console.log('STOCK:', this.stock);
         this.stockCopy = JSON.parse(JSON.stringify(this.stock));
       },
       deep: true,

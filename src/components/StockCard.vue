@@ -33,7 +33,6 @@ export default {
   }),
   methods: {
     async updateShow(v) {
-      console.log('UPDATING SHOW:', v);
       this.stock.show = v;
       await this.$db.putStock(this.stock);
       this.$bus.$emit('update');
