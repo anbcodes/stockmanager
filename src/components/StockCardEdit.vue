@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :value="value" @input='$emit("input", arguments[0])'>
+  <v-dialog :value="value" @input='$emit("input", arguments[0])' max-width="500">
     <v-card>
       <v-card-title class="title">
         {{stockCopy.name}} ({{stockCopy.ticker}})
@@ -21,15 +21,25 @@
         </v-container>
       </v-card-text>
       <v-card-actions>
-        <v-btn @click="save">
-          {{create ? 'Create' : 'Save'}}
-        </v-btn>
-        <v-btn @click="$emit('input', false)">
-          Close
-        </v-btn>
-        <v-btn @click="remove" v-if="!create">
-          Delete
-        </v-btn>
+        <v-container>
+          <v-row>
+            <v-col cols="4">
+              <v-btn block @click="$emit('input', false)" outlined>
+                Close
+              </v-btn>
+            </v-col>
+            <v-col cols="4">
+              <v-btn block @click="save" outlined color="success">
+                {{create ? 'Create' : 'Save'}}
+              </v-btn>
+            </v-col>
+            <v-col cols="4" v-if="!create">
+              <v-btn block @click="remove" outlined color="error">
+                Delete
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-container>
       </v-card-actions>
     </v-card>
   </v-dialog>
