@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <v-dialog :value="value" @input="$emit('input', arguments[0])" max-width="400">
     <v-card>
       <v-img v-if="ogData.ogImage" :src="ogData.ogImage.url">
       </v-img>
@@ -19,10 +19,13 @@
         <v-btn @click.stop="editOpen = !editOpen">
           Edit
         </v-btn>
+        <v-btn @click.stop="$emit('input', false)">
+          Close
+        </v-btn>
       </v-card-actions>
     </v-card>
     <news-card-edit :card="newsCard" v-model="editOpen"/>
-  </div>
+  </v-dialog>
 </template>
 <script>
 import openGraph from 'open-graph-scraper';
@@ -31,6 +34,7 @@ import NewsCardEdit from './NewsCardEdit.vue';
 export default {
   props: {
     newsCard: Object,
+    value: Boolean,
   },
   components: {
     NewsCardEdit,

@@ -13,10 +13,40 @@
             Stocks:
           </span>
         </v-row>
-        <v-row height="100">
-          <v-col cols="3" v-for="stock in stocks" :key='stock.id'>
-            <stock-card :stock="stock" />
-          </v-col>
+        <v-row>
+          <v-simple-table style="width: 100%">
+            <template v-slot:default>
+              <thead>
+                <tr>
+                  <th class="text-left">Name</th>
+                  <th class="text-left">Ticker</th>
+                  <th class="text-left">Count</th>
+                  <th class="text-left">Price</th>
+                  <th class="text-left">Show</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="stock in stocks"
+                  :key="stock.id"
+                  @click="createStockCard = false; currentCreateStock = stock; stockEditOpen = true"
+                >
+                  <td>{{ stock.name }}</td>
+                  <td>{{ stock.ticker }}</td>
+                  <td>{{ stock.count }}</td>
+                  <td>{{ stock.price }}</td>
+                  <td>
+                    <v-switch
+                      :input-value="stock.show"
+                      @click.stop="updateShow(stock, !stock.show)"
+                    />
+                  </td>
+                </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
+        </v-row>
+        <v-row>
           <v-col cols="1">
             <v-btn icon large @click="addStock">
               <v-icon large>
@@ -35,20 +65,44 @@
             Add Site:
           </span>
         </v-row>
-         <v-row>
-          <v-col cols="4" v-for="card in cards" :key='card.id'>
-            <news-card :newsCard="card" />
-          </v-col>
-          <v-col cols="1">
-            <v-btn icon large @click="addCard">
-              <v-icon large>
-                mdi-plus
-              </v-icon>
-            </v-btn>
-          </v-col>
+        <v-row>
+          <v-simple-table style="width: 100%">
+            <template v-slot:default>
+              <thead>
+                <tr>
+                  <th class="text-left">Name</th>
+                  <th class="text-left">Stock</th>
+                  <th class="text-left">Link</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="card in cards"
+                  :key="card.id"
+                  @click="viewCard = true; currentNewsCard = card"
+                >
+                  <td>{{ card.name }}</td>
+                  <td>{{ card.stock }}</td>
+                  <td><a :href="card.link">{{ card.link }}</a></td>
+                </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
+        </v-row>
+        <v-row>
+          <v-btn icon large @click="addCard">
+            <v-icon large>
+              mdi-plus
+            </v-icon>
+          </v-btn>
         </v-row>
       </v-container>
-      <stock-card-edit v-model='stockEditOpen' create :stock='currentCreateStock' />
+      <stock-card-edit
+        v-model='stockEditOpen'
+        :create="createStockCard"
+        :stock='currentCreateStock'
+      />
+      <news-card v-model="viewCard" :newsCard="currentNewsCard" />
       <news-card-edit v-model='newsEditOpen' create :card='currentCreateCard' />
     </v-content>
   </v-app>
@@ -58,22 +112,20 @@
 import NewsCard from './components/NewsCard.vue';
 import NewsCardEdit from './components/NewsCardEdit.vue';
 import StockCardEdit from './components/StockCardEdit.vue';
-import StockCard from './components/StockCard.vue';
 
 export default {
   async mounted() {
-    await this.getCards();
     await this.getStocks();
+    await this.getCards();
     this.$bus.$on('update', async () => {
-      await this.getCards();
       await this.getStocks();
+      await this.getCards();
     });
   },
   name: 'App',
   components: {
     NewsCard,
     NewsCardEdit,
-    StockCard,
     StockCardEdit,
   },
   data: () => ({
@@ -83,6 +135,9 @@ export default {
     newsEditOpen: false,
     currentCreateStock: {},
     currentCreateCard: {},
+    createStockCard: true,
+    currentNewsCard: {},
+    viewCard: false,
   }),
   methods: {
     async getCards() {
@@ -105,6 +160,7 @@ export default {
         price: 0,
         show: false,
       };
+      this.createStockCard = true;
       this.stockEditOpen = true;
     },
     addCard() {
@@ -115,6 +171,12 @@ export default {
         stock: 'pick a stock',
       };
       this.newsEditOpen = true;
+    },
+    async updateShow(stock, show) {
+      /* eslint-disable-next-line */
+      stock.show = show;
+      await this.$db.putStock(stock);
+      this.$bus.$emit('update');
     },
   },
   computed: {
