@@ -127,7 +127,7 @@ export default {
         : stockNames
           .slice(0, -1)
           .join(', ')
-          .concat('and')
+          .concat(', and ')
           .concat(
             stockNames.slice(-1)[0],
           );
